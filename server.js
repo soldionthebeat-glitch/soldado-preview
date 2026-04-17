@@ -1,3 +1,9 @@
+const express = require("express");
+const fs = require("fs");
+
+const app = express();
+
+
 app.get("/stream/:id", (req, res) => {
   const id = req.params.id;
 
@@ -20,4 +26,8 @@ app.get("/stream/:id", (req, res) => {
   });
 
   fs.createReadStream(filePath, { start, end }).pipe(res);
+});
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log("Servidor corriendo");
 });
