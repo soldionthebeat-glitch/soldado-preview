@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SOLDADO x SOLDI</title>
 
 <style>
@@ -22,11 +21,6 @@ body {
 .header h1 {
   font-size: 28px;
   letter-spacing: 2px;
-  text-shadow: 0 0 10px red, 0 0 20px blue;
-}
-
-.header p {
-  font-size: 14px;
 }
 
 .grid {
@@ -51,13 +45,14 @@ audio {
   width: 100%;
 }
 
+.locked {
+  color: red;
+  font-weight: bold;
+}
+
 @media (min-width: 768px) {
   .grid {
     grid-template-columns: repeat(2, 1fr);
-  }
-
-  .header h1 {
-    font-size: 40px;
   }
 }
 
@@ -79,7 +74,6 @@ audio {
 <div class="grid" id="tracks"></div>
 
 <script>
-
 const tracks = Array.from({ length: 20 }, (_, i) => ({
   id: i + 1,
   name: "Track " + (i + 1),
@@ -106,30 +100,20 @@ tracks.forEach(track => {
   const status = document.createElement("div");
 
   if (played.includes(track.id)) {
-    audio.disabled = true;
-    card.classList.add("disabled");
-    status.innerText = "Ya escuchado";
+    audio.controls = false;
+    status.innerText = "🔒 Ya escuchado";
     status.className = "locked";
   }
 
-  audio.addEventListener("play", () => {
-
+  audio.addEventListener("ended", () => {
     if (!played.includes(track.id)) {
       played.push(track.id);
       localStorage.setItem("playedTracks", JSON.stringify(played));
 
-      // bloquear después de reproducir
-      setTimeout(() => {
-        audio.pause();
-        audio.currentTime = 0;
-        audio.disabled = true;
-        card.classList.add("disabled");
-        status.innerText = "Ya escuchado";
-        status.className = "locked";
-      }, 1000);
-
+      audio.controls = false;
+      status.innerText = "🔒 Ya escuchado";
+      status.className = "locked";
     }
-
   });
 
   card.appendChild(title);
@@ -138,7 +122,6 @@ tracks.forEach(track => {
 
   container.appendChild(card);
 });
-
 </script>
 
 </body>

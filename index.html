@@ -16,7 +16,6 @@ body {
   height: 100vh;
 }
 
-/* estética pro */
 .container {
   text-align: center;
   width: 90%;
@@ -50,11 +49,6 @@ button {
 }
 
 .hidden { display: none; }
-
-audio {
-  width: 100%;
-  margin-top: 20px;
-}
 </style>
 </head>
 
@@ -72,19 +66,12 @@ audio {
   <p id="error"></p>
 </div>
 
-<div id="player" class="hidden">
-  <h1>ACCESS GRANTED</h1>
-  <audio controls autoplay>
-    <source src="preview.mp3">
-  </audio>
-</div>
-
 </div>
 
 <script>
-
 const API = "https://soldado-api.onrender.com";
-window.location.href = "player.html";
+
+// cargar accesos restantes
 async function loadRemaining() {
   let res = await fetch(API + "/remaining");
   let data = await res.json();
@@ -95,6 +82,7 @@ async function loadRemaining() {
     : "Accesos agotados";
 }
 
+// login
 async function login() {
   let code = document.getElementById("code").value;
 
@@ -107,8 +95,8 @@ async function login() {
   let data = await res.json();
 
   if (data.success) {
-    document.getElementById("login").classList.add("hidden");
-    document.getElementById("player").classList.remove("hidden");
+    // ✅ recién acá entra
+    window.location.href = "player.html";
   } else {
     document.getElementById("error").innerText =
       "Código inválido o ya usado";
@@ -118,9 +106,7 @@ async function login() {
 }
 
 loadRemaining();
-
 </script>
-
 
 </body>
 </html>

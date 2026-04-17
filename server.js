@@ -2,11 +2,32 @@ const express = require("express");
 const fs = require("fs");
 
 const app = express();
+app.use(express.json());
 
+// 🔐 códigos
+let codes = ["VIP1", "VIP2", "VIP3", "VIP4", "VIP5"];
+let usedCodes = [];
 
+// 👥 accesos restantes
+app.get("/remaining", (req, res) => {
+  res.json({ remaining: codes.length - usedCodes.length });
+});
+
+// 🔐 login
+app.post("/login", (req, res) => {
+  const { code } = req.body;
+
+  if (codes.includes(code) && !usedCodes.includes(code)) {
+    usedCodes.push(code);
+    return res.json({ success: true });
+  }
+
+  res.json({ success: false });
+});
+
+// 🎧 streaming
 app.get("/stream/:id", (req, res) => {
   const id = req.params.id;
-
   const filePath = `tracks/track${id}.mp3`;
 
   if (!fs.existsSync(filePath)) {
@@ -14,9 +35,8 @@ app.get("/stream/:id", (req, res) => {
   }
 
   const stat = fs.statSync(filePath);
-
   const start = 0;
-  const end = Math.min(stat.size, 500000); // 🔥 limita duración
+  const end = Math.min(stat.size, 500000);
 
   res.writeHead(206, {
     "Content-Type": "audio/mpeg",
@@ -27,6 +47,7 @@ app.get("/stream/:id", (req, res) => {
 
   fs.createReadStream(filePath, { start, end }).pipe(res);
 });
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log("Servidor corriendo");
