@@ -1,49 +1,23 @@
-const express = require("express");
-const fs = require("fs");
-const cors = require("cors");
+app.get("/stream/:id", (req, res) => {
+  const id = req.params.id;
 
-const app = express();
-app.use(express.json());
-app.use(cors());
+  const filePath = `tracks/track${id}.mp3`;
 
-const DB_FILE = "codes.json";
-
-// Leer base de datos
-function readDB() {
-  return JSON.parse(fs.readFileSync(DB_FILE));
-}
-
-// Guardar base de datos
-function saveDB(data) {
-  fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2));
-}
-
-// LOGIN
-app.post("/login", (req, res) => {
-  const { code } = req.body;
-
-  let db = readDB();
-
-  let found = db.find(c => c.code === code && !c.used);
-
-  if (!found) {
-    return res.json({ success: false });
+  if (!fs.existsSync(filePath)) {
+    return res.status(404).send("No existe");
   }
 
-  found.used = true;
-  saveDB(db);
+  const stat = fs.statSync(filePath);
 
-  res.json({ success: true });
+  const start = 0;
+  const end = Math.min(stat.size, 500000); // 🔥 limita duración
+
+  res.writeHead(206, {
+    "Content-Type": "audio/mpeg",
+    "Content-Range": `bytes ${start}-${end}/${stat.size}`,
+    "Accept-Ranges": "bytes",
+    "Content-Length": end - start
+  });
+
+  fs.createReadStream(filePath, { start, end }).pipe(res);
 });
-
-// CONTADOR
-app.get("/remaining", (req, res) => {
-  let db = readDB();
-  let remaining = db.filter(c => !c.used).length;
-
-  res.json({ remaining });
-});
-
-// 🔥 IMPORTANTE PARA RENDER
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log("Servidor activo 🔥"));
