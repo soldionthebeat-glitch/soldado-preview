@@ -106,7 +106,32 @@ async function login() {
 }
 
 loadRemaining();
+
+
+async function login() {
+  let code = document.getElementById("code").value;
+
+  console.log("Enviando código:", code);
+
+  let res = await fetch(API + "/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ code })
+  });
+
+  let data = await res.json();
+
+  console.log("Respuesta:", data);
+
+  if (data.success) {
+    window.location.href = "player.html";
+  } else {
+    document.getElementById("error").innerText =
+      "Código inválido o ya usado";
+  }
+}
 </script>
+
 
 </body>
 </html>

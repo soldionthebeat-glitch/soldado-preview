@@ -1,11 +1,11 @@
 [
   {
     "code": "VIP1",
-    "used": true
+    "used": false
   },
   {
     "code": "VIP2",
-    "used": true
+    "used": false
   },
   {
     "code": "VIP3",
