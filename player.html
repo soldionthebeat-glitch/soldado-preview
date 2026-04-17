@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+<meta charset="UTF-8">
+<title>SOLDADO x SOLDI</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #ff0000, #0011ff);
+  color: white;
+}
+
+.header {
+  text-align: center;
+  padding: 20px 10px;
+}
+
+.header h1 {
+  font-size: 28px;
+  letter-spacing: 2px;
+  text-shadow: 0 0 10px red, 0 0 20px blue;
+}
+
+.header p {
+  font-size: 14px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 15px;
+  padding: 10px;
+}
+
+.card {
+  background: rgba(0,0,0,0.5);
+  padding: 12px;
+  border-radius: 10px;
+}
+
+.track-title {
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+audio {
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .header h1 {
+    font-size: 40px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <h1>SOLDADO x SOLDI ON THE BEAT</h1>
+  <p>Solo podés escuchar cada track una vez</p>
+</div>
+
+<div class="grid" id="tracks"></div>
+
+<script>
+
+const tracks = Array.from({ length: 20 }, (_, i) => ({
+  id: i + 1,
+  name: "Track " + (i + 1),
+  src: "tracks/track" + (i + 1) + ".mp3"
+}));
+
+let played = JSON.parse(localStorage.getItem("playedTracks")) || [];
+
+const container = document.getElementById("tracks");
+
+tracks.forEach(track => {
+
+  const card = document.createElement("div");
+  card.className = "card";
+
+  const title = document.createElement("div");
+  title.className = "track-title";
+  title.innerText = track.name;
+
+  const audio = document.createElement("audio");
+  audio.controls = true;
+  audio.src = track.src;
+
+  const status = document.createElement("div");
+
+  if (played.includes(track.id)) {
+    audio.disabled = true;
+    card.classList.add("disabled");
+    status.innerText = "Ya escuchado";
+    status.className = "locked";
+  }
+
+  audio.addEventListener("play", () => {
+
+    if (!played.includes(track.id)) {
+      played.push(track.id);
+      localStorage.setItem("playedTracks", JSON.stringify(played));
+
+      // bloquear después de reproducir
+      setTimeout(() => {
+        audio.pause();
+        audio.currentTime = 0;
+        audio.disabled = true;
+        card.classList.add("disabled");
+        status.innerText = "Ya escuchado";
+        status.className = "locked";
+      }, 1000);
+
+    }
+
+  });
+
+  card.appendChild(title);
+  card.appendChild(audio);
+  card.appendChild(status);
+
+  container.appendChild(card);
+});
+
+</script>
+
+</body>
+</html>

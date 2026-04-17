@@ -1,0 +1,22 @@
+[
+  {
+    "code": "VIP1",
+    "used": true
+  },
+  {
+    "code": "VIP2",
+    "used": true
+  },
+  {
+    "code": "VIP3",
+    "used": false
+  },
+  {
+    "code": "VIP4",
+    "used": false
+  },
+  {
+    "code": "VIP5",
+    "used": false
+  }
+]
