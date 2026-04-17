@@ -83,7 +83,7 @@ audio {
 const tracks = Array.from({ length: 20 }, (_, i) => ({
   id: i + 1,
   name: "Track " + (i + 1),
-  src: "tracks/track" + (i + 1) + ".mp3"
+  src: "https://soldado-api.onrender.com/stream/" + (i + 1)
 }));
 
 let played = JSON.parse(localStorage.getItem("playedTracks")) || [];
